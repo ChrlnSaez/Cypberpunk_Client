@@ -4,7 +4,6 @@ import SideNavbar from './components/SideNavbar';
 import Profile from './components/Profile';
 import Assignment from './components/Assignment';
 import Attendance from './components/Attendance';
-
 import './index.css';
 
 function App() {
