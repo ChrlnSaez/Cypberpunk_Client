@@ -7,7 +7,7 @@
 @layer base {
     body {
         @apply bg-CoolGray200;
-        @apply font-body;
+        @apply font-raleway;
     }
 }
 
