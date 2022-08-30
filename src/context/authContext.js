@@ -1,23 +1,25 @@
-import jwtDecode from "jwt-decode";
-import { createContext, useCallback, useContext, useState } from "react";
+import jwtDecode from 'jwt-decode';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [userRole, setUserRole] = useState(null);
+  const [userId, setUserId] = useState(null);
 
-  if (token !== null && userRole === null) {
-    const role = jwtDecode(token).role;
+  if (token !== null && userRole === null && userId === null) {
+    const { role, id } = jwtDecode(token);
     setUserRole(role);
+    setUserId(id);
   }
 
   const signIn = useCallback(() => {
-    setToken(localStorage.getItem("token"));
+    setToken(localStorage.getItem('token'));
   }, []);
 
   const signOut = useCallback(() => {
-    localStorage.removeItem("token");
+    localStorage.removeItem('token');
     setToken(null);
     setUserRole(null);
     window.location.reload();
