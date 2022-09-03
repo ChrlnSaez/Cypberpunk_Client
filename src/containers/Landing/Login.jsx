@@ -17,10 +17,6 @@ const options = [
   },
 ];
 
-alert(
-  'Admin credentials: \nemail: todxamjqdcbxbjwyqr@bvhrs.com\npassword: fV9nue2gjgiCA21AERkxyy'
-);
-
 const LoginForm = () => {
   const { register, handleSubmit } = useForm();
   const { execute } = useSignIn();
@@ -48,6 +44,11 @@ const LoginForm = () => {
       <form
         onSubmit={handleSubmit(handleOnSubmit)}
         className='bg-white flex flex-col w-[500px] mr-24 p-4 gap-4 rounded-lg'>
+        <div className='bg-gray-200 rounded-lg w-full p-2'>
+          <h3 className='font-bold text-lg text-center'>Admin Credentials</h3>
+          <p>Email: todxamjqdcbxbjwyqr@bvhrs.com</p>
+          <p>Password: fV9nue2gjgiCA21AERkxyy</p>
+        </div>
         <h1 className='text-2xl font-bold'>LOGIN</h1>
         <Input
           placeholder='Enter email address...'
