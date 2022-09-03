@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const client = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://cyberpunk-api.vercel.app/api',
 });
 
 client.interceptors.request.use(async (config) => {
