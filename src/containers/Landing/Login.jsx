@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useSignIn } from '../../api/signin';
-import '../../assets/styles/login.css';
+import Input from '../../components/Input';
 import { useAuth } from '../../context/authContext';
 
 const options = [
@@ -17,23 +17,21 @@ const options = [
   },
 ];
 
-const LoginForm = () => {
-  const [role, setRole] = useState('student');
+alert(
+  'Admin credentials: \nemail: todxamjqdcbxbjwyqr@bvhrs.com\npassword: fV9nue2gjgiCA21AERkxyy'
+);
 
+const LoginForm = () => {
   const { register, handleSubmit } = useForm();
   const { execute } = useSignIn();
   const auth = useAuth();
-
-  const handleOnChange = useCallback((e) => {
-    setRole(e.target.value);
-  }, []);
 
   const handleOnSubmit = useCallback(
     async (data) => {
       try {
         const {
           data: { token },
-        } = await execute(data, role);
+        } = await execute(data);
         localStorage.setItem('token', token);
 
         auth.signIn();
@@ -42,26 +40,40 @@ const LoginForm = () => {
         toast.error(error.response.data.error);
       }
     },
-    [execute, role, auth]
+    [execute, auth]
   );
 
   return (
-    <form onSubmit={handleSubmit(handleOnSubmit)} className='cover' id='login'>
-      <h1 className='text-2xl font-bold mt-10'>LOGIN</h1>
-      <input type='email' placeholder='Email' {...register('email')} />
-      <input type='password' placeholder='Password' {...register('password')} />
-      <select name='Role' id='Role' onChange={handleOnChange}>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-
-      <button className='login-btn font-bold bg-gradient-to-tr from-PrimaryHoverBlue400 to-PrimaryLightblue900'>
-        Login
-      </button>
-    </form>
+    <div className='w-full flex justify-center items-center'>
+      <form
+        onSubmit={handleSubmit(handleOnSubmit)}
+        className='bg-white flex flex-col w-[500px] mr-24 p-4 gap-4 rounded-lg'>
+        <h1 className='text-2xl font-bold'>LOGIN</h1>
+        <Input
+          placeholder='Enter email address...'
+          label='Email Address'
+          {...register('email')}
+        />
+        <Input
+          type='password'
+          placeholder='Enter password...'
+          label='Password'
+          {...register('password')}
+        />
+        <select
+          {...register('role')}
+          className='border-2 border-gray-300 text-gray-500 rounded-lg py-2 px-4 outline-blue-600 font-semibold'>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <button className='font-bold bg-blue-900 text-white rounded-lg p-2'>
+          Login
+        </button>
+      </form>
+    </div>
   );
 };
 

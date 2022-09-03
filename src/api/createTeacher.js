@@ -1,18 +1,12 @@
 import { useCallback, useState } from 'react';
 import client from '../lib/client';
 
-const signIn = async (payload) => {
-  let response = null;
-  if (payload.role === 'student') {
-    response = await client.post('/auth/student/login', payload);
-  } else {
-    response = await client.post('/auth/teacher/login', payload);
-  }
-
+const createTeacher = async (payload) => {
+  const response = await client.post('/auth/teacher/register', payload);
   return response;
 };
 
-export const useSignIn = () => {
+export const useCreateTeacher = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
@@ -20,7 +14,7 @@ export const useSignIn = () => {
   const execute = useCallback(async (payload) => {
     try {
       setIsLoading(true);
-      const response = await signIn(payload);
+      const response = await createTeacher(payload);
       setData(response);
       return response;
     } catch (error) {

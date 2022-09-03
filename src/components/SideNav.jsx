@@ -1,25 +1,15 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Disclosure } from '@headlessui/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import LogoIcon from '../assets/images/about.png';
 
-import {
-  MdOutlineDashboard,
-  MdClass,
-  MdOutlineSettings,
-  MdLogout,
-} from 'react-icons/md';
+import { MdOutlineDashboard, MdClass, MdLogout } from 'react-icons/md';
 
-import {
-  FaBookmark,
-  FaCalendarAlt,
-  FaClipboard,
-  FaUser,
-  FaUserTie,
-} from 'react-icons/fa';
+import { FaCalendarAlt, FaUser, FaUsers, FaUserTie } from 'react-icons/fa';
 import { useAuth } from '../context/authContext';
 import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const adminLinks = [
   {
@@ -33,32 +23,22 @@ const adminLinks = [
     icon: MdClass,
   },
   {
-    to: 'admin/students',
-    label: 'Students',
-    icon: FaUser,
-  },
-  {
     to: 'admin/teachers',
     label: 'Teachers',
     icon: FaUserTie,
+  },
+  {
+    to: 'admin/students',
+    label: 'Students',
+    icon: FaUsers,
   },
 ];
 
 const studentLinks = [
   {
-    to: 'student/dashboard',
-    label: 'Dashboard',
-    icon: MdOutlineDashboard,
-  },
-  {
     to: 'student/profile',
     label: 'Profile',
     icon: FaUser,
-  },
-  {
-    to: 'student/assignment',
-    label: 'Assignment',
-    icon: FaClipboard,
   },
   {
     to: 'student/attendance',
@@ -74,19 +54,16 @@ const teacherLinks = [
     icon: MdOutlineDashboard,
   },
   {
-    to: 'teacher/profile',
-    label: 'Classroom',
-    icon: FaBookmark,
-  },
-  {
-    to: 'teacher/attendance',
-    label: 'Attendance',
-    icon: FaCalendarAlt,
+    to: 'teacher/students',
+    label: 'Students',
+    icon: FaUsers,
   },
 ];
 
 const SideNav = () => {
   const auth = useAuth();
+
+  const location = useLocation();
 
   const isAdmin = useMemo(() => auth?.userRole === 'admin', [auth?.userRole]);
   const isStudent = useMemo(
@@ -98,6 +75,16 @@ const SideNav = () => {
     [auth?.userRole]
   );
 
+  const links = useMemo(() => {
+    if (isAdmin) return adminLinks;
+    if (isStudent) return studentLinks;
+    if (isTeacher) return teacherLinks;
+  }, [isAdmin, isStudent, isTeacher]);
+
+  const handleLogout = useCallback(() => {
+    auth.signOut();
+  }, [auth]);
+
   return (
     <div>
       <Disclosure as='nav' className='md:mr-64'>
@@ -107,74 +94,32 @@ const SideNav = () => {
             aria-hidden='true'
           />
         </Disclosure.Button>
-        <div className='p-6 w-1/2 h-screen bg-gray-100 z-20 fixed top-0 -left-96 lg:w-60 lg:left-0 peer-focus:left-0 peer:transition ease-out delay-150 duration-200'>
+        <div className='p-6 w-1/2 h-screen bg-gray-100 z-10 fixed top-0 -left-96 lg:w-60 lg:left-0 peer-focus:left-0 peer:transition ease-out delay-150 duration-200'>
           <div className='mb-8 flex felx-col justify-center items-center'>
             <img src={LogoIcon} alt='logo' width='130' />
           </div>
           <div className='my-4 border-b pb-12'>
-            {isAdmin && (
-              <>
-                {adminLinks.map((link, index) => (
-                  <Link to={link.to} key={index}>
-                    <div className='flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
-                      <link.icon className='text-2xl text-blue-900 group-hover:text-gray-200' />
-                      <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
-                        {link.label}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
-              </>
-            )}
-            {isStudent && (
-              <>
-                {studentLinks.map((link, index) => (
-                  <Link to={link.to} key={index}>
-                    <div className='flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
-                      <link.icon className='text-2xl text-blue-900 group-hover:text-gray-200' />
-                      <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
-                        {link.label}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
-              </>
-            )}
-            {isTeacher && (
-              <>
-                {teacherLinks.map((link, index) => (
-                  <Link to={link.to} key={index}>
-                    <div className='flex mb-2 justify-start items-center gap-4 pl-5 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
-                      <link.icon className='text-2xl text-blue-900 group-hover:text-gray-200' />
-                      <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
-                        {link.label}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
-              </>
-            )}
+            {links.map((link, index) => (
+              <Link to={link.to} key={index}>
+                <div
+                  className={`flex mb-2 justify-start items-center gap-4 pl-5 text-blue-900 hover:bg-blue-900 hover:text-white p-2 rounded-md cursor-pointer hover:shadow-lg m-auto ${
+                    location.pathname.includes(link.to) &&
+                    'bg-blue-900 !text-white'
+                  }`}>
+                  <link.icon className='text-2xl' />
+                  <h3 className='text-base font-semibold'>{link.label}</h3>
+                </div>
+              </Link>
+            ))}
           </div>
-          <div className='my-8'>
-            <Link to='/settings'>
-              <div className='flex mb-4 justify-start items-center gap-4 pl-5 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
-                <MdOutlineSettings className='text-2xl text-blue-900 group-hover:text-gray-200' />
-                <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
-                  Settings
-                </h3>
-              </div>
-            </Link>
-          </div>
-          <Link to='/logout'>
-            <div className='my-8'>
-              <div className='flex mb-2 justify-center items-center gap-2 px-5 border border-blue-900 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
-                <MdLogout className='text-2xl text-blue-900 group-hover:text-gray-200' />
-                <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
-                  Log out
-                </h3>
-              </div>
+          <button className='w-full' onClick={handleLogout}>
+            <div className='flex mb-2 justify-center items-center gap-2 px-5 border border-blue-900 hover:bg-blue-900 p-2 rounded-md group cursor-pointer hover:shadow-lg m-auto'>
+              <MdLogout className='text-2xl text-blue-900 group-hover:text-gray-200' />
+              <h3 className='text-base text-blue-900 group-hover:text-gray-200 font-semibold'>
+                Log out
+              </h3>
             </div>
-          </Link>
+          </button>
         </div>
       </Disclosure>
     </div>

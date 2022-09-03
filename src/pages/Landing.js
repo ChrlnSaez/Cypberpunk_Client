@@ -8,7 +8,7 @@ const Landing = () => {
   const auth = useAuth();
 
   if (auth?.token && auth.userRole === 'student')
-    return <Navigate to='/student/dashboard' replace />;
+    return <Navigate to='/student/profile' replace />;
 
   if (auth?.token && auth.userRole === 'teacher')
     return <Navigate to='/teacher/dashboard' replace />;
@@ -17,7 +17,7 @@ const Landing = () => {
     return <Navigate to='/admin/dashboard' replace />;
 
   return (
-    <div className='flex flex-row top-[10%]' id='home'>
+    <div className='flex justify-between' id='home'>
       <div className='flex flex-col'>
         <img src={Logo} alt='Logo' className='hidden ml-24 w-full md:flex' />
       </div>

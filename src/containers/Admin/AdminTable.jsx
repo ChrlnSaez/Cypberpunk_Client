@@ -23,18 +23,22 @@ const options = [
   },
 ];
 
-const TableItems = ({ data, name }) => {
+const TableItems = ({ data, classroom }) => {
   return (
     <div className='grid grid-cols-4 border-b py-2 justify-items-center'>
       <p>{`${data.firstName} ${data.lastName}`}</p>
       <p>{data._id}</p>
-      <p>{name}</p>
+      <p>
+        {classroom.map((c) => (
+          <span>{c.name} </span>
+        ))}{' '}
+      </p>
       <p>{data.email}</p>
     </div>
   );
 };
 
-const AdminTable = ({ isValidating, classrooms }) => {
+const AdminTable = ({ isValidating, classrooms, students, teachers }) => {
   const [selectedValue, setSelectedValue] = useState(options[0]);
 
   return (
@@ -50,24 +54,37 @@ const AdminTable = ({ isValidating, classrooms }) => {
           <>Loading...</>
         ) : (
           <>
-            {classrooms?.map((classroom, classIndex) => {
-              if (selectedValue.value === 'student') {
-                return classroom.students.map((student, studentIndex) => (
-                  <TableItems
-                    data={student}
-                    name={classroom.name}
-                    key={studentIndex}
-                  />
-                ));
-              }
-              return (
-                <TableItems
-                  data={classroom.teacher}
-                  name={classroom.name}
-                  key={classIndex}
-                />
-              );
-            })}
+            {selectedValue.value === 'student' ? (
+              <>
+                {students?.map((student) => {
+                  const classroom = classrooms.filter((classroom) =>
+                    classroom.students.some((s) => s._id === student._id)
+                  );
+                  return (
+                    <TableItems
+                      key={student._id}
+                      data={student}
+                      classroom={classroom}
+                    />
+                  );
+                })}
+              </>
+            ) : (
+              <>
+                {teachers?.map((teacher) => {
+                  const classroom = classrooms.filter(
+                    (classroom) => classroom.teacher._id === teacher._id
+                  );
+                  return (
+                    <TableItems
+                      key={teacher._id}
+                      data={teacher}
+                      classroom={classroom}
+                    />
+                  );
+                })}
+              </>
+            )}
           </>
         )}
       </div>

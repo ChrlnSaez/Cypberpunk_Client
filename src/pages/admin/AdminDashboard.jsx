@@ -15,6 +15,8 @@ const AdminDashboard = () => {
   const { data: attendances, isValidating: attendanceValidating } =
     useAllAttendances();
 
+  console.log({ students, teachers });
+
   const isValidating = useMemo(
     () =>
       studentValidating ||
